@@ -65,7 +65,7 @@ final readonly class Inflector implements InflectorInterface
         }
 
         return match ($mod10) {
-            1 => $one,
+            1       => $one,
             2, 3, 4 => $few,
             default => $many,
         };
