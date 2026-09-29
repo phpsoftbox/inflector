@@ -8,14 +8,22 @@ use PhpSoftBox\Inflector\Inflector;
 use PhpSoftBox\Inflector\InflectorFactory;
 use PhpSoftBox\Inflector\LanguageEnum;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Inflector::class)]
+#[CoversMethod(Inflector::class, 'tableize')]
+#[CoversMethod(Inflector::class, 'classify')]
+#[CoversMethod(Inflector::class, 'camelize')]
+#[CoversMethod(Inflector::class, 'capitalize')]
+#[CoversMethod(Inflector::class, 'urlize')]
 final class InflectorHelpersTest extends TestCase
 {
     /**
      * Проверяет tableize(): перевод CamelCase в snake_case (для таблиц/колонок).
+     *
+     * @see Inflector::tableize()
      */
     #[Test]
     public function tableize(): void
@@ -29,6 +37,8 @@ final class InflectorHelpersTest extends TestCase
 
     /**
      * Проверяет classify(): перевод snake_case в PascalCase (для имён классов).
+     *
+     * @see Inflector::classify()
      */
     #[Test]
     public function classify(): void
@@ -42,6 +52,8 @@ final class InflectorHelpersTest extends TestCase
 
     /**
      * Проверяет camelize(): перевод snake_case в camelCase (для полей/свойств).
+     *
+     * @see Inflector::camelize()
      */
     #[Test]
     public function camelize(): void
@@ -53,6 +65,8 @@ final class InflectorHelpersTest extends TestCase
 
     /**
      * Проверяет capitalize(): настройка разделителей.
+     *
+     * @see Inflector::capitalize()
      */
     #[Test]
     public function capitalize(): void
@@ -65,6 +79,8 @@ final class InflectorHelpersTest extends TestCase
 
     /**
      * Проверяет urlize(): формирует url-friendly slug.
+     *
+     * @see Inflector::urlize()
      */
     #[Test]
     public function urlize(): void

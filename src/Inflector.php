@@ -7,15 +7,17 @@ namespace PhpSoftBox\Inflector;
 use PhpSoftBox\Inflector\Contracts\InflectorInterface;
 use PhpSoftBox\Inflector\Contracts\NameInflectionInterface;
 use PhpSoftBox\Inflector\Names\BaseNameInflection;
+use PhpSoftBox\Inflector\Names\Cases;
+use PhpSoftBox\Inflector\Names\Gender;
 use RuntimeException;
 
 use function abs;
 use function function_exists;
-use function iconv;
 use function lcfirst;
 use function mb_strtolower;
 use function mb_strtoupper;
 use function mb_substr;
+use function preg_match;
 use function preg_replace;
 use function sprintf;
 use function str_replace;
@@ -46,12 +48,12 @@ final readonly class Inflector implements InflectorInterface
 
     public function pluralize(string $word): string
     {
-        return $this->inflect($word, $this->pluralRuleset);
+        return $this->inflect($word, $this->pluralRuleset, $this->singularRuleset);
     }
 
     public function singularize(string $word): string
     {
-        return $this->inflect($word, $this->singularRuleset);
+        return $this->inflect($word, $this->singularRuleset, $this->pluralRuleset);
     }
 
     public function pluralizeByCount(int $count, string $one, string $few, string $many): string
@@ -72,24 +74,29 @@ final readonly class Inflector implements InflectorInterface
     }
 
     /**
-     * @return array<string, string>
+     * @return array<value-of<Cases>, string>
      */
-    public function getNameCases(string $fullName, ?string $gender = null): array
+    public function getNameCases(string $fullName, ?Gender $gender = null): array
     {
         return $this->nameInflection->getCases($fullName, $gender);
     }
 
-    public function getNameCase(string $fullName, string $case, ?string $gender = null): string
+    public function getNameCase(string $fullName, Cases $case, ?Gender $gender = null): string
     {
         return $this->nameInflection->getCase($fullName, $case, $gender);
     }
 
-    public function detectNameGender(string $fullName): ?string
+    public function detectNameGender(string $fullName): ?Gender
     {
         return $this->nameInflection->detectGender($fullName);
     }
 
-    private function inflect(string $word, Ruleset $ruleset): string
+    /**
+     * @param Ruleset $ruleset правила целевой формы
+     * @param Ruleset $oppositeRuleset правила обратного преобразования: по его irregular-словарю распознаётся,
+     *                                 что слово уже в целевой форме (pluralize('people') → 'people')
+     */
+    private function inflect(string $word, Ruleset $ruleset, Ruleset $oppositeRuleset): string
     {
         $word = trim($word);
         if ($word === '') {
@@ -105,7 +112,19 @@ final readonly class Inflector implements InflectorInterface
             return $this->matchCase($word, $irregular);
         }
 
-        return $ruleset->getRegular()->apply($word);
+        if ($oppositeRuleset->getIrregular()->get($word) !== null) {
+            return $word;
+        }
+
+        $inflected = $ruleset->getRegular()->apply($word);
+
+        // Не-ASCII слово целиком в верхнем регистре (КАТЕГОРИЯ) остаётся в верхнем регистре.
+        // Латинские аббревиатуры склоняются как в Doctrine: API -> APIs.
+        if (preg_match('/[^\x00-\x7F]/', $word) === 1 && $word === $this->toUpper($word)) {
+            return $this->toUpper($inflected);
+        }
+
+        return $inflected;
     }
 
     private function matchCase(string $original, string $replacementLower): string
@@ -172,56 +191,20 @@ final readonly class Inflector implements InflectorInterface
     }
 
     /**
-     * Конвертирует строку в url-friendly формат.
+     * Конвертирует строку в url-friendly формат: транслитерация в ASCII ({@see Transliterator}), нижний регистр,
+     * любые последовательности не-буквенно-цифровых символов — один дефис.
      *
-     * Пример: "My first blog post" -> "my-first-blog-post".
+     * Пример: "My first blog post" -> "my-first-blog-post", "Привет мир 2024" -> "privet-mir-2024".
      */
     public function urlize(string $string): string
     {
-        $unaccented = $this->unaccent($string);
+        $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower(Transliterator::toAscii($string)));
 
-        $lowered = function_exists('mb_strtolower')
-            ? mb_strtolower($unaccented)
-            : strtolower($unaccented);
-
-        $replacements = [
-            '/\W/'                   => ' ',
-            '/([A-Z]+)([A-Z][a-z])/' => '\\1_\\2',
-            '/([a-z\d])([A-Z])/'     => '\\1_\\2',
-            '/[^A-Z^a-z^0-9^\/]+/'   => '-',
-        ];
-
-        $urlized = $lowered;
-
-        foreach ($replacements as $pattern => $replacement) {
-            $replaced = preg_replace($pattern, $replacement, $urlized);
-
-            if ($replaced === null) {
-                throw new RuntimeException(sprintf('preg_replace returned null for value "%s"', $urlized));
-            }
-
-            $urlized = $replaced;
+        if ($slug === null) {
+            throw new RuntimeException(sprintf('preg_replace returned null for value "%s"', $string));
         }
 
-        return trim($urlized, '-');
-    }
-
-    /**
-     * Упрощённое удаление диакритики.
-     *
-     * Для наших целей достаточно лёгкого варианта:
-     * - если доступен iconv, пробуем translit
-     * - иначе возвращаем как есть
-     */
-    private function unaccent(string $string): string
-    {
-        if (!function_exists('iconv')) {
-            return $string;
-        }
-
-        $converted = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $string);
-
-        return $converted === false ? $string : $converted;
+        return trim($slug, '-');
     }
 
     private function toUpper(string $value): string

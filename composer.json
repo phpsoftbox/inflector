@@ -17,7 +17,7 @@
     },
     "suggest": {
         "ext-mbstring": "Improves unicode lowercasing for tableize() and urlize().",
-        "ext-iconv": "Enables transliteration for urlize() via unaccent()."
+        "ext-iconv": "Transliterates accented Latin letters (é -> e) in urlize() and Transliterator; Cyrillic works without it."
     },
     "require-dev": {
         "phpsoftbox/cs-fixer": "^1.2.1",

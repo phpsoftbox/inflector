@@ -8,15 +8,21 @@ use PhpSoftBox\Inflector\Inflector;
 use PhpSoftBox\Inflector\InflectorFactory;
 use PhpSoftBox\Inflector\LanguageEnum;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(InflectorFactory::class)]
 #[CoversClass(Inflector::class)]
+#[CoversMethod(Inflector::class, 'pluralize')]
+#[CoversMethod(Inflector::class, 'singularize')]
+#[CoversMethod(Inflector::class, 'pluralizeByCount')]
 final class RussianRulesTest extends TestCase
 {
     /**
      * Проверяет pluralize: базовые правила русского склонения.
+     *
+     * @see Inflector::pluralize()
      */
     #[Test]
     public function pluralize(): void
@@ -33,6 +39,8 @@ final class RussianRulesTest extends TestCase
 
     /**
      * Проверяет singularize: обратные правила для русского склонения.
+     *
+     * @see Inflector::singularize()
      */
     #[Test]
     public function singularize(): void
@@ -49,6 +57,9 @@ final class RussianRulesTest extends TestCase
 
     /**
      * Проверяет слова, которые не должны изменяться при pluralize/singularize.
+     *
+     * @see Inflector::pluralize()
+     * @see Inflector::singularize()
      */
     #[Test]
     public function uninflectedWords(): void
@@ -63,6 +74,8 @@ final class RussianRulesTest extends TestCase
 
     /**
      * Проверяет выбор формы слова по числу для RU-правил (1/2-4/5+).
+     *
+     * @see Inflector::pluralizeByCount()
      */
     #[Test]
     public function pluralizeByCount(): void

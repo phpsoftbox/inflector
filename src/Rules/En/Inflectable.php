@@ -40,10 +40,10 @@ final class Inflectable
         yield new Transformation(new Pattern('(c)riterion$'), '$1riteria');
 
         yield new Transformation(new Pattern('(buffal|her|potat|tomat|volcan)o$'), '$1oes');
-        yield new Transformation(new Pattern('(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|vir)us$'), '$1i');
+        yield new Transformation(new Pattern('(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin)us$'), '$1i');
 
-        // bus -> buses
-        yield new Transformation(new Pattern('(bu)s$'), '$1ses');
+        // bus -> buses, virus -> viruses
+        yield new Transformation(new Pattern('(us)$'), '$1es');
 
         yield new Transformation(new Pattern('(alias)$'), '$1es');
         yield new Transformation(new Pattern('(analys|ax|cris|test|thes)is$'), '$1es');
@@ -70,7 +70,7 @@ final class Inflectable
 
         yield new Transformation(new Pattern('(alias)(es)*$'), '$1');
         yield new Transformation(new Pattern('(buffal|her|potat|tomat|volcan)oes$'), '$1o');
-        yield new Transformation(new Pattern('(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|viri?)i$'), '$1us');
+        yield new Transformation(new Pattern('(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin)i$'), '$1us');
 
         yield new Transformation(new Pattern('(analys|ax|cris|test|thes)es$'), '$1is');
         yield new Transformation(new Pattern('(shoe|slave)s$'), '$1');
@@ -89,6 +89,9 @@ final class Inflectable
         yield new Transformation(new Pattern('(tax)a$'), '$1on');
         yield new Transformation(new Pattern('(c)riteria$'), '$1riterion');
         yield new Transformation(new Pattern('([ti])a$'), '$1um');
+
+        // Уже единственное число: bus, status, analysis, class — окончание -s не отбрасывается
+        yield new Transformation(new Pattern('(us|ss|is)$'), '$1');
 
         yield new Transformation(new Pattern('s$'), '');
     }

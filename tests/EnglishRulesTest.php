@@ -8,15 +8,20 @@ use PhpSoftBox\Inflector\Inflector;
 use PhpSoftBox\Inflector\InflectorFactory;
 use PhpSoftBox\Inflector\LanguageEnum;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(InflectorFactory::class)]
 #[CoversClass(Inflector::class)]
+#[CoversMethod(Inflector::class, 'pluralize')]
+#[CoversMethod(Inflector::class, 'singularize')]
 final class EnglishRulesTest extends TestCase
 {
     /**
      * Проверяет pluralize: базовые и расширенные правила английского.
+     *
+     * @see Inflector::pluralize()
      */
     #[Test]
     public function pluralize(): void
@@ -33,6 +38,8 @@ final class EnglishRulesTest extends TestCase
 
     /**
      * Проверяет singularize: базовые и расширенные правила английского.
+     *
+     * @see Inflector::singularize()
      */
     #[Test]
     public function singularize(): void
@@ -49,6 +56,9 @@ final class EnglishRulesTest extends TestCase
 
     /**
      * Проверяет неправильные формы (irregular).
+     *
+     * @see Inflector::pluralize()
+     * @see Inflector::singularize()
      */
     #[Test]
     public function irregularNouns(): void
@@ -67,6 +77,9 @@ final class EnglishRulesTest extends TestCase
 
     /**
      * Проверяет неисчисляемые существительные (uncountable).
+     *
+     * @see Inflector::pluralize()
+     * @see Inflector::singularize()
      */
     #[Test]
     public function uncountableNouns(): void
@@ -82,6 +95,9 @@ final class EnglishRulesTest extends TestCase
 
     /**
      * Проверяет сохранение регистра для irregular (Person -> People, PERSON -> PEOPLE).
+     *
+     * @see Inflector::pluralize()
+     * @see Inflector::singularize()
      */
     #[Test]
     public function preservesCaseForIrregular(): void
@@ -97,6 +113,9 @@ final class EnglishRulesTest extends TestCase
 
     /**
      * Проверяет, что uninflected может быть задан через regex Pattern.
+     *
+     * @see Inflector::pluralize()
+     * @see Inflector::singularize()
      */
     #[Test]
     public function regexUninflectedPatternsWork(): void
@@ -116,6 +135,9 @@ final class EnglishRulesTest extends TestCase
 
     /**
      * Проверяет наиболее частые доменные сущности.
+     *
+     * @see Inflector::pluralize()
+     * @see Inflector::singularize()
      */
     #[Test]
     public function commonDomainWords(): void
@@ -141,6 +163,9 @@ final class EnglishRulesTest extends TestCase
 
     /**
      * Проверяет edge-кейсы, которые регулярно встречаются при генерации имён (таблицы/колонки/сущности).
+     *
+     * @see Inflector::pluralize()
+     * @see Inflector::singularize()
      */
     #[Test]
     public function namingEdgeCases(): void
