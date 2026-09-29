@@ -20,7 +20,7 @@
         "ext-iconv": "Transliterates accented Latin letters (é -> e) in urlize() and Transliterator; Cyrillic works without it."
     },
     "require-dev": {
-        "phpsoftbox/cs-fixer": "^1.2.1",
+        "phpsoftbox/cs-fixer": "^1.2.2",
         "phpunit/phpunit": "^13.3"
     },
     "autoload": {
@@ -38,6 +38,5 @@
         "cs:fix": "vendor/bin/psb-cs-fixer fix",
         "cs:check": "vendor/bin/psb-cs-fixer check --diff"
     },
-    "minimum-stability": "dev",
     "prefer-stable": true
 }
