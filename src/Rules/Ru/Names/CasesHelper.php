@@ -4,25 +4,18 @@ declare(strict_types=1);
 
 namespace PhpSoftBox\Inflector\Rules\Ru\Names;
 
-use InvalidArgumentException;
+use PhpSoftBox\Inflector\Names\Cases as BaseCases;
 
 use function implode;
 
 final class CasesHelper
 {
+    /**
+     * Каноническое значение падежа по названию/сокращению; неизвестное — InvalidArgumentException.
+     */
     public static function canonize(string $case): string
     {
-        $case = StringHelper::lower($case);
-
-        return match ($case) {
-            Cases::IMENIT, 'именительный', 'именит', 'и', 'n', 'nominative' => Cases::IMENIT,
-            Cases::RODIT, 'родительный', 'родит', 'р', 'g', 'genitive', 'genetive' => Cases::RODIT,
-            Cases::DAT, 'дательный', 'дат', 'д', 'd', 'dative' => Cases::DAT,
-            Cases::VINIT, 'винительный', 'винит', 'в', 'accusative' => Cases::VINIT,
-            Cases::TVORIT, 'творительный', 'творит', 'т', 'a', 'ablative' => Cases::TVORIT,
-            Cases::PREDLOJ, 'предложный', 'предлож', 'п', 'prepositional' => Cases::PREDLOJ,
-            default => throw new InvalidArgumentException('Invalid case: ' . $case),
-        };
+        return BaseCases::fromAlias($case)->value;
     }
 
     /**

@@ -21,7 +21,7 @@ final class Uninflected
         yield from self::getDefault();
 
         // singular-specific
-        yield new Pattern('.*ss');
+        yield new Pattern('ss$');
         yield new Pattern('clothes');
         yield new Pattern('data');
         yield new Pattern('fascia');

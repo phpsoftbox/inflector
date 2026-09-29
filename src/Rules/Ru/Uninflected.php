@@ -7,7 +7,7 @@ namespace PhpSoftBox\Inflector\Rules\Ru;
 use PhpSoftBox\Inflector\Rules\Pattern;
 
 /**
- * Uninflected для русского языка.
+ * Uninflected для русского языка: несклоняемые заимствования, аббревиатуры и слова без единственного числа.
  */
 final class Uninflected
 {
@@ -17,6 +17,9 @@ final class Uninflected
     public static function getSingular(): iterable
     {
         yield from self::getDefault();
+
+        // Только множественное число
+        yield new Pattern('/^(деньги|сутки|ножницы|брюки|очки|данные|часы)$/iu');
     }
 
     /**
@@ -25,6 +28,8 @@ final class Uninflected
     public static function getPlural(): iterable
     {
         yield from self::getDefault();
+
+        yield new Pattern('/^(деньги|сутки|ножницы|брюки|очки|данные)$/iu');
     }
 
     /**
@@ -32,9 +37,11 @@ final class Uninflected
      */
     private static function getDefault(): iterable
     {
-        // Набор можно расширять по мере появления слов, не меняющих форму.
-        yield new Pattern('/^киз$/iu');
-        yield new Pattern('/^sms$/iu');
-        yield new Pattern('/^api$/iu');
+        // Аббревиатуры и латиница
+        yield new Pattern('/^(киз|инн|кпп|огрн|бик|ндс|sms|api)$/iu');
+        yield new Pattern('/^[a-z0-9_-]+$/iu');
+
+        // Несклоняемые заимствования
+        yield new Pattern('/^(кофе|кафе|какао|пальто|метро|кино|такси|меню|шоссе|жюри|интервью|резюме|радио|фото|видео|авто|депо|кашпо|пюре|кенгуру|евро)$/iu');
     }
 }
